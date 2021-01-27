@@ -56,6 +56,8 @@ def upload_image():
 		image = image[0]
 		save_image(image, './static/images/' + filename)
 
+		preds = int(preds.cpu())
+
 		print('upload_image filename: ' + filename)
 
 		flash(f'Prediction: {preds}')
