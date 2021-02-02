@@ -28,7 +28,7 @@ app.config['UPLOAD_FOLDER'] = save_img_path
 def img_files(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in file_extensions
 	
-@app.route('/')
+@app.route('/', methods =['GET'])
 def upload_form():
 	return render_template('upload.html')
 

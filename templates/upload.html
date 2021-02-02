@@ -1,6 +1,10 @@
 <!doctype html>
 <title>Python Flask Image Upload and Display Example</title>
-<h2>Select an image to upload and display</h2>
+<h2>MNIST Number Classification </h2>
+<h3>1. Select an image to upload </h3>
+<h3>2. Draw a number on the pad below </h3>
+
+<h4> 1. select an image to upload </h4>
 <p>
 	{% with messages = get_flashed_messages() %}
 	  {% if messages %}
@@ -30,3 +34,26 @@
 		<input type="submit" value="Submit">
 	</p>
 </form>
+<h4> 2. Draw a number on the pad below </h4>
+<link rel = "stylesheet" href="../public/css/style.css">
+<div class = "container">
+	<div id = "sketch">
+		<div class = "describtion"> Draw a digit from 0 to 9 </div>
+		<div class = "row">
+			<div class = "col-sm-4"> </div>
+			<div class = "col-sm-4">
+				<div class = "container" style = "padding-left: 110px">
+					<button type = "button" class = "button clear" id = "clear" onclick ="redrraw()"> Clear </button>
+					<button id = "submit-btn" class = "button submit" type ="submit"> Submit </button>
+				</div>
+			</div>
+			<div class= "col-sm-4"></div>
+		</div>
+	</div>
+</div>
+
+<script type = "text/javascript" src = "../public/src/app.js"></script>
+<script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<!--credit to github.com/vic614/mnist -->
+</script>
+	
