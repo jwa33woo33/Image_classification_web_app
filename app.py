@@ -11,6 +11,9 @@ from torchvision.utils import save_image
 from inference import evaluation
 from model import LeNet
 
+from keras.models import model_from_json
+import json
+
 file_extensions = set(['png', 'jpg', 'jpeg', 'gif'])
 
 save_img_path = './static/images/'
@@ -28,11 +31,19 @@ app.config['UPLOAD_FOLDER'] = save_img_path
 def img_files(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in file_extensions
 	
-@app.route('/', methods =['GET'])
-def upload_form():
-	return render_template('upload.html')
+@app.route('/')
+def index():
+	return render_template('index.html')
 
-@app.route('/', methods=['POST'])
+@app.route('/mnist/upload')
+def mnist_upload():
+    return render_template('upload.html')
+
+@app.route('/mnist/pad')
+def mnist_pad():
+    return render_template('pad.html')
+
+@app.route('/predict', methods=['POST'])
 def upload_image():
 	if 'file' not in request.files:
 		flash('No file part')
@@ -66,7 +77,21 @@ def upload_image():
 		flash('Image extension must be -> png, jpg, jpeg, gif')
 		return redirect(request.url)
 
-
+def pad_image():
+        #pad output:
+        model = LeNet().to(device)
+        weight_path = './weight/mnist.pth'
+        array_raw = json.loads(request.data)['array']
+        array_raw_np = np.array(array_raw)
+        array_processed = []
+        for i in range(0,280, 10):
+            for j in range(0, 280, 10):
+                array_processed.append(int(np.average(array_raw[i:i+10, j:j+10])))
+        pixels = np.array(array_processed).flatten().reshape((1,28,28,1))
+        
+        image, pred = evaluation(pixels, weight_path, model)
+        json_respond = json.dumps({"digit": "{}".format(pred)})
+        return json_respond
 
     
 
