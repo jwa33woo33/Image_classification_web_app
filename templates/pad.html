@@ -1,0 +1,61 @@
+<!doctype html>
+<head>
+<style>
+	.btn {
+		text-decoration:none;
+		font-size: 2rem;
+		color: White;
+		padding: 10px 20px 10px 20px;
+		margin: 20px;
+		display: inline-block;
+		border-radius: 10px;
+		transition:all 0.1s;
+		text-shadow: 0px -2px rgba(0, 0, 0, 0.44);
+		font-family: 'Lobster', cursive;
+	}
+	.btn:active{
+		transform: translateY(3px);
+	}
+	.btn.blue{
+		background-color: #1f75d9;
+		border-bottom:5px solid #165195;
+	}
+	.btn.blue:active{
+		border-bottom:2px solid #165195;
+	}
+</style>
+<title>Python Flask Image Upload and Display Example</title>
+</head>
+<body>
+<h2>MNIST Number Classification </h2>
+<h3> Draw a number on the pad below </h3>
+
+<link rel = "stylesheet" href="{{url_for('static', filename = 'style.css')}}">
+<div class = "container">
+	<div id = "sketch">
+		<div class= "row">
+			<canvas id = "paint"></canvas>
+		</div>
+		<br>
+		<div class = "describtion"> Draw a digit from 0 to 9 </div>
+		<div class = "row">
+			<div class = "col-sm-4"> </div>
+			<div class = "col-sm-4">
+				<div class = "container" style = "padding-left: 110px">
+					<button type = "button" class = "button clear" id = "clear" onclick ="redraw()"> Clear </button>
+					<button id = "submit-btn" class = "button submit" type ="submit"> Submit </button>
+				</div>
+			</div>
+			<div class= "col-sm-4"></div>
+		</div>
+	</div>
+</div>
+
+<script src = "{{url_for('static' , filename ='app.js') }}"></script>
+<script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<!--credit to github.com/vic614/mnist -->
+
+<a class = "btn blue" href="../">Back</a>
+</body>
+

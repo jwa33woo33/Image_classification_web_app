@@ -1,0 +1,203 @@
+<!--project : image classfication, object detection, instance segmeatation
+data : Mnist, landmark, + @
+model : vairous-->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset = "UTF-8">
+	<title> Deep Learning Toy Project by YW/KW </title>
+	<style>
+		#container {
+        		width:960px;
+        		margin:0 auto;
+        		text-align:center;
+		}
+		.tab {
+        		list-style: none;
+        		margin: 0;
+        		padding: 0;
+			overflow: hidden;
+			text-align:center;
+		}
+		.tab li{
+			float: left;
+		}       
+		.tab li a {
+			display: inline-block;
+			color: #000;
+			text-align: center;
+			text-decoration: none;
+			padding: 14px 16px;
+			front-size: 17px;
+			transition: 0.3s;
+		}       
+		.tabcontent{
+			display: none;
+			backgroud-color:rgb(153,232, 247);
+			padding: 6px 12px;
+			color: #fff;
+			text-align:center;
+		}       
+
+		ul.tab li.project {
+        		background-color:rgb(153,232,247);
+        		color: #222
+		}
+		.tabcontent.project{
+        		display:block;
+		}
+		.subtab {
+                        list-style: none;
+                        margin: 0;
+                        padding: 0;
+                        overflow: hidden;
+                        text-align:center;
+                }
+                .subtab li{
+                        float: left;
+                }
+                .subtab li a {
+                        display: inline-block;
+                        color: #000;
+                        text-align: center;
+                        text-decoration: none;
+                        padding: 14px 16px;
+                        front-size: 17px;
+                        transition: 0.3s;
+                }
+                .subtabcontent{
+                        display: none;
+                        backgroud-color:rgb(150,200, 200);
+                        padding: 6px 12px;
+                        color: #fff;
+                        text-align:center;
+                }
+                ul.subtab li.subproject {
+                        background-color:rgb(150,200,200);
+                        color: #222
+                }
+                .subtabcontent.subproject{
+                        display:block;
+		}
+		.liltab {
+                        list-style: none;
+                        margin: 0;
+                        padding: 0;
+                        overflow: hidden;
+                        text-align:center;
+                }
+                .liltab li{
+                        float: left;
+                }
+                .liltab li a {
+                        display: inline-block;
+                        color: #000;
+                        text-align: center;
+                        text-decoration: none;
+                        padding: 14px 16px;
+                        front-size: 17px;
+                        transition: 0.3s;
+                }
+                .liltabcontent{
+                        display: none;
+                        backgroud-color:rgb(100,240, 240);
+                        padding: 6px 12px;
+                        color: #fff;
+                        text-align:center;
+                }
+                ul.liltab li.subsubproject {
+                        background-color:rgb(100,240,240);
+                        color: #222
+                }
+                .liltabcontent.subsubproject{
+                        display:block;
+		}
+	div {
+		height: 100%;
+		width: 500px;
+	}
+	div.top {
+		height: 30%;
+		float: left;
+	}
+	div.bot {
+		height: 70%;
+		float: left;
+	}
+	</style>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+</head>
+<body>
+	<div id  ="container">
+		<h2> Deep Learning Toy Poject by YW/KW </h2>
+		<ul class ="tab">
+			<li class = "project" data-tab = "tab1"><a href ="#"> Image-Classification </a></li>
+			<li data-tab = "tab2"><a href = "#"> Object-Detection </a></li>
+			<li data-tab = "tab3"><a href = "#"> Instance-Segmentation </a></li>
+		</ul>
+		
+		<div id ="tab1", class = "tabcontent project">
+			<ul class = "subtab">
+			<li class = "subproject"  data-tab = "tab4"><a href ="#"> MNIST </a></li>
+			<li data-tab = "tab5"><a href ="#"> LandMark </a><li>
+			<!-- add more tab as we have more data structures -->
+			</ul>
+			<div id = "tab4", class="subtabcontent project">
+				<ul class = "liltab">
+				<div class == "bot">
+					<li class = "subsubproject"  data-tab = "tab6"><a href = "./mnist/upload"> Upload Mnist Pic </a></li>
+                                <li data-tab = "tab7"><a href ="./mnist/pad"> Pad Drawing </a></li>
+				</div>
+				</ul>
+			</div>
+		</div>
+	
+
+		<div id="tab2", class = "tabcontent">
+			<h3> Object-Detection </h3>
+			<p> Landmark </p>
+		</div>
+
+		<div id="tab3", class ="tabcontent">
+			<h3> Instance-segmentation</h3>
+			<p> example </p>
+		</div>
+	</div>
+	<script>
+		$(function(){
+			$('ul.tab li').click(function() {
+				var activeTab = $(this).attr('data-tab');
+				$('ul.tab li').removeClass('project');
+				$('.tabcontent').removeClass('project');
+				$(this).addClass('project');
+				$('#' + activeTab).addClass('project');
+			})
+		});
+	</script>
+        <script>
+                $(function(){
+                        $('ul.subtab li').click(function() {
+                                var activeTab = $(this).attr('data-tab');
+                                $('ul.subtab li').removeClass('subproject');
+                                $('.subtabcontent').removeClass('subproject');
+                                $(this).addClass('subproject');
+                                $('#' + activeTab).addClass('subproject');
+                        })
+                });
+        </script>
+        <script>
+                $(function(){
+                        $('ul.liltab li').click(function() {
+                                var activeTab = $(this).attr('data-tab');
+                                $('ul.liltab li').removeClass('subsubproject');
+                                $('.liltabcontent').removeClass('subsubproject');
+                                $(this).addClass('subsubproject');
+                                $('#' + activeTab).addClass('subsubproject');
+                        })
+                });
+        </script>
+
+</body>
+</html>
