@@ -76,7 +76,7 @@ function getdata(){
 		dataType: "json",
 		contentType: "application/json; charset=utf-8",
 		data: JSON.stringify({
-			"array" : array;
+			"array" : array
 		}),
 		success: function (data) {
 			$("result").html("<p> Result is: " + data['digit'] " </p>");

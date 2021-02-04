@@ -1,4 +1,5 @@
 <!doctype html>
+<html>
 <head>
 <style>
         .btn {
@@ -27,38 +28,32 @@
 <title>Python Flask Image Upload and Display Example</title>
 </head>
 <body>
-<h2>MNIST Number Classification </h2>
-<h3> Select an image to upload </h3>
-<p>
-	{% with messages = get_flashed_messages() %}
-	  {% if messages %}
-		<ul class=flashes>
-		{% for message in messages %}
-		  <li>{{ message }}</li>
-		{% endfor %}
-		</ul>
-	  {% endif %}
-	{% endwith %}
-</p>
-
-{% if filename %}
+	<h2> Upload Mnist Dataset </h2>
+	<h4> digits 0 ~ 9 </h4>
+	<form action = "http://localhost:9000/upload" method = "POST" enctype =  "multipart/form-data">
+	<input type = "file" name = "file" />
+	<input type = "submit"/>
+	</form>
 	<div>
-        <!-- <img src="/static/img_1.jpg"> -->
-		<img src="{{ url_for('display_image', filename=filename) }}">
-	</div>
-{% endif %}
-
-<form method="post" action="/" enctype="multipart/form-data">
-    <dl>
 		<p>
-			<input type="file" name="file" autocomplete="off" required>
+			{% if  num == None %}
+				{% if filename %}
+					<h5> This is not MNIST digit. Please Re-upload the image </h5>
+				{% else %}
+					<h5> File is empty. Please upload the file </h5>
+				{% endif %}
+			{% else %}
+				<p> Prediction value is : {{num}} </br> </p>
+				<p> File name : {{filename}} </br> </p>
+				{% if filename %}	
+					<img src= "{{url_for('static', filename = filename )}}" >
+				{% endif %}
+			{% endif %}
 		</p>
-    </dl>
-    <p>
-		<input type="submit" value="Submit">
-	</p>
-</form>
+	</div>
+				
 
 <a class = "btn blue" href="../">Back</a>
 
 </body>
+</html>

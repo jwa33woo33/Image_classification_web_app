@@ -43,39 +43,40 @@ def mnist_upload():
 def mnist_pad():
     return render_template('pad.html')
 
-@app.route('/predict', methods=['POST'])
+@app.route('/mnist/upload/pred', methods=['POST'])
 def upload_image():
-	if 'file' not in request.files:
-		flash('No file part')
-		return redirect(request.url)
-	file = request.files['file']
+    if 'file' not in request.files:
+        flash('No file part')
+        return redirect(url_for('/mnist/upload'))
+    file = request.files['file']
 
-	if file.filename == '':
-		flash('No image selected for uploading')
-		return redirect(request.url)
+    if file.filename == '':
+        flash('No image selected for uploading')
+        return redirect(url_for('/mnist/upload'))
 
-	if file and img_files(file.filename):
-		filename = secure_filename(file.filename)
-		image_source = request.files['file'].stream
+    if file and img_files(file.filename):
+        filename = secure_filename(file.filename)
+        image_source = request.files['file'].stream
 
-		# image_path = './static/images/' + filename
-		weight_path = './weight/mnist.pth'
+        #image_path = './static/images/' + filename
+        weight_path = './weight/mnist.pth'
 
-		model = LeNet().to(device)
-		image, preds = evaluation(image_source, weight_path, model)
+        model = LeNet().to(device)
+        image, preds = evaluation(image_source, weight_path, model)
 
-		image = image[0]
-		save_image(image, './static/images/' + filename)
+        image = image[0]
+        save_image(image, './static/images/' + filename)
 
-		preds = int(preds.cpu())
+        preds = int(preds.cpu())
 
-		print('upload_image filename: ' + filename)
+        print('upload_image filename: ' + filename)
 
-		flash(f'Prediction: {preds}')
-		return render_template('upload.html', filename=filename)
-	else:
-		flash('Image extension must be -> png, jpg, jpeg, gif')
-		return redirect(request.url)
+        flash(f'Prediction: {preds}')
+        #return render_template('upload.html', filename=filename)        
+        return url_for('mnist/upload/success', filename = filename)
+    else:
+        flash('Image extension must be -> png, jpg, jpeg, gif')
+        return redirect(request.url)
 
 def pad_image():
         #pad output:

@@ -12,12 +12,12 @@ transform = transforms.Compose([
     transforms.ToTensor(),
     ])
 
-def evaluation(img_source, weight_path, model):
+def evaluation(pixels, weight_path, model):
 
-    inputs = Image.open(img_source)
+    inputs = pixels
 
-    inputs = transform(inputs)
-    inputs = torch.unsqueeze(inputs, dim=0)
+    #inputs = transform(inputs)
+    #inputs = torch.unsqueeze(inputs, dim=0)
 
     model.load_state_dict(torch.load(weight_path))
 
