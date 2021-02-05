@@ -57,6 +57,9 @@ def upload_image():
     if request.method == 'POST':
         f = request.files['file']
         fname = secure_filename(f.filename)
+        #if f is empty string, nothing will happen.
+        if fname =='':
+            return redirect(url_for('mnist_view'))
         os.makedirs('static', exist_ok = True)
         f.save(os.path.join('static', fname))
         img = Image.open(f, 'r')
@@ -64,11 +67,8 @@ def upload_image():
         weight_path = './weight/mnist.pth'
         model = LeNet().to(device)
         img, preds = evaluation(img, weight_path, model)
-        
         preds = int(preds)
-
         data = {'num': preds,'filename': fname}
-
     return render_template('upload_mnist.html', num= data['num'], filename = data['filename'])
 
 
