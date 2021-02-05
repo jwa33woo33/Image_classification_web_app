@@ -1,9 +1,15 @@
 import os
+import glob
+import json
+import base64
+import io
+
+from PIL import Image
+import numpy as np
+
 import urllib.request
 from flask import Flask, flash, request, redirect, url_for, render_template
 from werkzeug.utils import secure_filename
-from PIL import Image
-import numpy as np
 
 import torch
 from torchvision.utils import save_image
@@ -11,8 +17,8 @@ from torchvision.utils import save_image
 from inference import evaluation
 from model import LeNet
 
-from keras.models import model_from_json
-import json
+#Initialize the useless part of the base64 encoded image.
+init_Base64 = 21
 
 file_extensions = set(['png', 'jpg', 'jpeg', 'gif'])
 
@@ -27,84 +33,85 @@ app.config['UPLOAD_FOLDER'] = save_img_path
 # app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 
-
 def img_files(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in file_extensions
-	
+
+
 @app.route('/')
-def index():
-	return render_template('index.html')
+def main_page():
+	return render_template('main_page.html')
+
 
 @app.route('/mnist/upload')
-def mnist_upload():
-    return render_template('upload.html')
+def mnist_view():
+    return render_template('upload_mnist.html')
+
 
 @app.route('/mnist/pad')
 def mnist_pad():
-    return render_template('pad.html')
+    return render_template('draw_mnist.html')
 
-@app.route('/mnist/upload/pred', methods=['POST'])
+
+@app.route('/mnist/prediction', methods=['POST'])
 def upload_image():
-    if 'file' not in request.files:
-        flash('No file part')
-        return redirect(url_for('/mnist/upload'))
-    file = request.files['file']
+    if request.method == 'POST':
+        f = request.files['file']
+        fname = secure_filename(f.filename)
+        os.makedirs('static', exist_ok = True)
+        f.save(os.path.join('static', fname))
+        img = Image.open(f, 'r')
 
-    if file.filename == '':
-        flash('No image selected for uploading')
-        return redirect(url_for('/mnist/upload'))
-
-    if file and img_files(file.filename):
-        filename = secure_filename(file.filename)
-        image_source = request.files['file'].stream
-
-        #image_path = './static/images/' + filename
         weight_path = './weight/mnist.pth'
-
         model = LeNet().to(device)
-        image, preds = evaluation(image_source, weight_path, model)
-
-        image = image[0]
-        save_image(image, './static/images/' + filename)
-
-        preds = int(preds.cpu())
-
-        print('upload_image filename: ' + filename)
-
-        flash(f'Prediction: {preds}')
-        #return render_template('upload.html', filename=filename)        
-        return url_for('mnist/upload/success', filename = filename)
-    else:
-        flash('Image extension must be -> png, jpg, jpeg, gif')
-        return redirect(request.url)
-
-def pad_image():
-        #pad output:
-        model = LeNet().to(device)
-        weight_path = './weight/mnist.pth'
-        array_raw = json.loads(request.data)['array']
-        array_raw_np = np.array(array_raw)
-        array_processed = []
-        for i in range(0,280, 10):
-            for j in range(0, 280, 10):
-                array_processed.append(int(np.average(array_raw[i:i+10, j:j+10])))
-        pixels = np.array(array_processed).flatten().reshape((1,28,28,1))
+        img, preds = evaluation(img, weight_path, model)
         
-        image, pred = evaluation(pixels, weight_path, model)
-        json_respond = json.dumps({"digit": "{}".format(pred)})
-        return json_respond
+        preds = int(preds)
 
-    
+        data = {'num': preds,'filename': fname}
 
-@app.route('/display/<filename>')
-def display_image(filename):
-	return redirect(url_for('static', filename='./images/' + filename), code=301)
+    return render_template('upload_mnist.html', num= data['num'], filename = data['filename'])
 
 
+@app.route('/mnist/draw_prediction', methods=['POST'])
+def predict():
+    if request.method == 'POST':
+        # Access the image
+        draw = request.form['url']
+        # Removing the useless part of the url.
+        draw = draw[init_Base64:]
+        # Decode to bytes array
+        draw_decoded = base64.b64decode(draw)
+        # Conver bytes array to PIL Image
+        imageStream = io.BytesIO(draw_decoded)
+        img = Image.open(imageStream)
 
-@app.route('/asdf') # 이걸 추가하면 http://localhost:9000/asdf 에 test1이 프린트됨 ㅇㅇ
-def test1():
-    return 'test1'
+        img = img.resize((28, 28))
+
+        print('\n\nthis is original size:',img.size)
+
+        # img = np.asarray(bytearray(draw_decoded), dtype="uint8")
+        # img = cv2.imdecode(img, cv2.IMREAD_GRAYSCALE)
+
+        # resized = cv2.resize(img, (28,28), interpolation = cv2.INTER_AREA)
+        # vect = np.asarray(resized, dtype="uint8")
+        # vect = vect.reshape(1, 1, 28, 28).astype('float32')
+
+        weight_path = './weight/mnist.pth'
+        model = LeNet().to(device)
+        img, preds = evaluation(img, weight_path, model)
+
+        pred = 5
+        pred = int(pred)
+        
+
+    return render_template('draw_mnist_predict.html', prediction=pred)
+
+
+
+for f_ext in file_extensions:  # Delete file after display
+    for img_file in glob.glob(f'./static/*.{f_ext}'):
+        os.remove(img_file)
 
 if __name__ == '__main__':
 	app.run(host='localhost', port=9000, debug = True)
+

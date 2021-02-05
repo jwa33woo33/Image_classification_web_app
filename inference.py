@@ -9,28 +9,29 @@ import torchvision.transforms as transforms
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 transform = transforms.Compose([
+    transforms.Resize((28, 28)),
     transforms.ToTensor(),
     ])
 
-def evaluation(pixels, weight_path, model):
+def evaluation(inputs, weight_path, model):
 
-    inputs = pixels
-
-    #inputs = transform(inputs)
-    #inputs = torch.unsqueeze(inputs, dim=0)
-
+    inputs = transform(inputs)
+    inputs = torch.unsqueeze(inputs, dim=0)
+    # inputs = inputs.view(1,1,28,28)
+    # inputs = inputs[:,-1,:,:]
+    
     model.load_state_dict(torch.load(weight_path))
 
-    with torch.no_grad():
-        model.eval()    # set the model to evaluation mode (dropout=False)
+    # print('\n\n\n\n\n', inputs.shape, 'ya!!!!!!!!!!!!!!!!!!!!!!\n\n\n')
 
+    model.eval()
+    with torch.no_grad():
+        
         inputs = inputs.to(device)
 
         preds = model(inputs)
         preds = torch.argmax(preds, 1)
-        # correct_prediction = torch.argmax(prediction, 1) == labels
-        # accuracy = correct_prediction.float().mean()
-        # print('Accuracy:', accuracy.item())
+
 
     return inputs, preds
 

@@ -30,7 +30,7 @@
 <body>
 	<h2> Upload Mnist Dataset </h2>
 	<h4> digits 0 ~ 9 </h4>
-	<form action = "http://localhost:9000/upload" method = "POST" enctype =  "multipart/form-data">
+	<form action = "http://localhost:9000/mnist/prediction" method = "POST" enctype =  "multipart/form-data">
 	<input type = "file" name = "file" />
 	<input type = "submit"/>
 	</form>
@@ -45,7 +45,7 @@
 			{% else %}
 				<p> Prediction value is : {{num}} </br> </p>
 				<p> File name : {{filename}} </br> </p>
-				{% if filename %}	
+				{% if filename %}
 					<img src= "{{url_for('static', filename = filename )}}" >
 				{% endif %}
 			{% endif %}
