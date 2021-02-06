@@ -14,7 +14,7 @@ from werkzeug.utils import secure_filename
 import torch
 from torchvision.utils import save_image
 
-from inference import evaluation
+from inference import evaluation, mnist_pad_data_preprocess
 from model import LeNet
 
 #Initialize the useless part of the base64 encoded image.
@@ -84,29 +84,14 @@ def predict():
         # Conver bytes array to PIL Image
         imageStream = io.BytesIO(draw_decoded)
         img = Image.open(imageStream)
-
-        img = img.resize((28, 28))
-
-        print('\n\nthis is original size:',img.size)
-
-        # img = np.asarray(bytearray(draw_decoded), dtype="uint8")
-        # img = cv2.imdecode(img, cv2.IMREAD_GRAYSCALE)
-
-        # resized = cv2.resize(img, (28,28), interpolation = cv2.INTER_AREA)
-        # vect = np.asarray(resized, dtype="uint8")
-        # vect = vect.reshape(1, 1, 28, 28).astype('float32')
-
+        # Data Preprocessing for Evaluation
+        img_final = mnist_pad_data_preprocess(img)
         weight_path = './weight/mnist.pth'
         model = LeNet().to(device)
-        img, preds = evaluation(img, weight_path, model)
+        img, preds = evaluation(img_final, weight_path, model)
+        preds = int(preds)
 
-        pred = 5
-        pred = int(pred)
-        
-
-    return render_template('draw_mnist_predict.html', prediction=pred)
-
-
+    return render_template('draw_mnist.html', prediction=preds)
 
 for f_ext in file_extensions:  # Delete file after display
     for img_file in glob.glob(f'./static/*.{f_ext}'):
