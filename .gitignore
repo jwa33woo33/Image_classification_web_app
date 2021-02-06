@@ -3,5 +3,4 @@
 =======
 *.pth
 dataset/MNIST
-static/*
 >>>>>>> a5fec2265ee448a989077a35f677351010f7891f
