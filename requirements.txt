@@ -5,4 +5,4 @@ torch
 torchvision
 json
 keras
-PIL
+pillow
