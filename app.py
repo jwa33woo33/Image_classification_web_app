@@ -6,6 +6,7 @@ import io
 
 from PIL import Image
 import numpy as np
+import cv2
 
 import urllib.request
 from flask import Flask, flash, request, redirect, url_for, render_template
@@ -81,17 +82,24 @@ def predict():
         draw = draw[init_Base64:]
         # Decode to bytes array
         draw_decoded = base64.b64decode(draw)
-        # Conver bytes array to PIL Image
-        imageStream = io.BytesIO(draw_decoded)
-        img = Image.open(imageStream)
-        # Data Preprocessing for Evaluation
-        img_final = mnist_pad_data_preprocess(img)
+
+        # Fix later(to PIL version)
+        # Conver bytes array to PIL Image  
+        # imageStream = io.BytesIO(draw_decoded)
+        # img = Image.open(imageStream)
+
+        img = np.asarray(bytearray(draw_decoded), dtype="uint8")
+        img = cv2.imdecode(img, cv2.IMREAD_GRAYSCALE)
+        img = cv2.resize(img, (28,28), interpolation = cv2.INTER_AREA)
+        img = Image.fromarray(img)
+
         weight_path = './weight/mnist.pth'
         model = LeNet().to(device)
-        img, preds = evaluation(img_final, weight_path, model)
-        preds = int(preds)
+        img, pred = evaluation(img, weight_path, model)
 
-    return render_template('draw_mnist.html', prediction=preds)
+        pred = int(pred)
+
+    return render_template('draw_mnist.html', prediction=pred)
 
 for f_ext in file_extensions:  # Delete file after display
     for img_file in glob.glob(f'./static/*.{f_ext}'):
