@@ -64,7 +64,7 @@ def upload_image():
         os.makedirs('static', exist_ok = True)
         f.save(os.path.join('static', fname))
         img = Image.open(f, 'r')
-
+        print(np.array(img))
         weight_path = './weight/mnist.pth'
         model = LeNet().to(device)
         img, preds = evaluation(img, weight_path, model)
@@ -91,6 +91,7 @@ def predict():
         img = np.asarray(bytearray(draw_decoded), dtype="uint8")
         img = cv2.imdecode(img, cv2.IMREAD_GRAYSCALE)
         img = cv2.resize(img, (28,28), interpolation = cv2.INTER_AREA)
+        print(img)
         img = Image.fromarray(img)
 
         weight_path = './weight/mnist.pth'
