@@ -47,7 +47,6 @@ class MnistDataset(Dataset):
 
         if self.transform is not None:
             image = self.transform(image)
-
         return image, label
 
 
@@ -71,7 +70,6 @@ class QuickDrawDataset(Dataset):
 
         if self.transform is not None:
             image = self.transform(image)
-        
         return image, label_id
     
     def load_data(self):
@@ -90,6 +88,28 @@ class QuickDrawDataset(Dataset):
 
             labels = os.path.splitext(os.path.basename(file).split('_')[-1])[0]
             count += 1
-            
         return self.all_x, self.all_y
 
+
+class LandmarkDataset(Dataset):
+    def __init__(self, transforms=None):
+        self.image_ids = glob.glob('./data/train/**/**/*')
+        with open('./data/train.csv') as f:
+            labels = list(csv.reader(f))[1:]
+            self.labels = {label[0]: int(label[1]) for label in labels}
+            print(self.labels)
+
+        self.transforms = transforms
+
+    def __len__(self):
+        return len(self.image_ids)
+
+    def __getitem__(self, idx):
+        image = cv2.imread(self.image_ids[idx])
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        label = os.path.splitext(os.path.basename(self.image_ids[idx]))[0]
+        label = self.labels[label]
+
+        if self.transforms is not None:
+            image = self.transforms(image=image)['image']
+        return image, label
