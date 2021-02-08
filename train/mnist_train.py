@@ -1,5 +1,6 @@
 import os
 import sys
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from random import randint
 
 import numpy as np
@@ -23,25 +24,18 @@ from model import LeNet
 from dataset.dataset import MnistDataset
 
 
-"""
-Setup device + for reproducibility, seed 고정
-"""
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 torch.manual_seed(1234)
 if device == 'cuda':
     torch.cuda.manual_seed_all(1234)
 
-"""
-Setup Parameters
-""" 
+
 learning_rate = 0.005
 epochs = 20
 batch_size = 128
 
-"""
-Train, Testset 불러오기 + Validation set
-"""
+
 # dataset = torchvision.datasets.MNIST(root='./mnist', 
 #                                      train=True, 
 #                                      transform=transforms.ToTensor(), 
@@ -57,7 +51,7 @@ Train, Testset 불러오기 + Validation set
 #                                       transform=transforms.ToTensor(), 
 #                                       download=True)
 
-data_path = './dataset/MNIST'
+data_path = '../dataset/MNIST'
 
 train_data = MnistDataset(data_path)
 
@@ -67,9 +61,6 @@ valid_len = len(train_data) - train_len
 train_set, valid_set = random_split(train_data, [train_len, valid_len])
 
 
-"""
-Dataloader
-"""
 train_loader = DataLoader(dataset=train_data,
                           batch_size=batch_size,
                           shuffle=True,
@@ -81,12 +72,11 @@ valid_loader = DataLoader(dataset=valid_set,
                           drop_last=True)
 
 
-model = LeNet().to(device)
+model = LeNet(num_classes=10).to(device)
 
 # Define loss & Optimizer
 criterion = nn.CrossEntropyLoss().to(device) # Multiclass classification 전용
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate) # SGD
-
 
 total_batch_train = len(train_loader)
 total_batch_val = len(valid_loader)
@@ -99,11 +89,6 @@ top5_train_accuracy_log = []
 valid_loss_log = []
 valid_accuracy_log = []
 top5_valid_accuracy_log = []
-
-# History for Confusion Matrix
-pred_list = torch.zeros(0, dtype=torch.long, device = 'cpu')
-label_list = torch.zeros(0, dtype=torch.long, device = 'cpu')
-
 
 for epoch in range(epochs):
     train_loss = 0
@@ -130,7 +115,7 @@ for epoch in range(epochs):
         _, top5_preds = torch.topk(outputs, 5)
 
         train_loss += loss.item()
-        train_total += labels.size(0) # altered
+        train_total += labels.size(0)
         train_correct += torch.sum(preds == labels)
         
         train_len = len(labels)
@@ -150,12 +135,8 @@ for epoch in range(epochs):
             _, top5_val_preds = torch.topk(val_outputs, 5)
 
             validation_loss += val_loss.item()
-            valid_total += val_label.size(0) # altered
+            valid_total += val_label.size(0)
             validation_correct += torch.sum(val_preds == val_label)
-            
-            # Append batch prediction results for Confusion matrix
-            pred_list = torch.cat([pred_list, val_preds.view(-1).cpu()])
-            label_list = torch.cat([label_list, val_label.view(-1).cpu()])
 
             # Calculate top 5 accuracy
             train_len = len(labels)
@@ -164,16 +145,16 @@ for epoch in range(epochs):
                     top5_valid_correct += 1
 
     epoch_loss = train_loss // total_batch_train
-    epoch_acc = 100 * train_correct // train_total #altered
+    epoch_acc = 100 * train_correct // train_total
     top5_epoch_acc = 100 * top5_train_correct // train_total
     top5_val_epoch_acc = 100 * top5_valid_correct // valid_total
 
     train_loss_log.append(epoch_loss)
     train_accuracy_log.append(epoch_acc)
     top5_train_accuracy_log.append(top5_epoch_acc)
-        
+
     val_epoch_loss = validation_loss // total_batch_val
-    val_epoch_acc = 100 * validation_correct // valid_total #altered
+    val_epoch_acc = 100 * validation_correct // valid_total
     valid_loss_log.append(val_epoch_loss)
     valid_accuracy_log.append(val_epoch_acc)
     top5_valid_accuracy_log.append(top5_val_epoch_acc)
@@ -185,4 +166,4 @@ for epoch in range(epochs):
 
 
 # Save model
-torch.save(model.state_dict(), f'./weight/mnist_{epochs}.pth')
+torch.save(model.state_dict(), f'../weight/mnist_{epochs}.pth')

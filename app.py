@@ -63,24 +63,26 @@ def upload_image():
             return redirect(url_for('mnist_view'))
         os.makedirs('static', exist_ok = True)
         f.save(os.path.join('static', fname))
+
         img = Image.open(f, 'r')
-        print(np.array(img))
+
+        img_display = img.resize((256, 256)) # To display large size image
+        display = 'display_' + fname
+        img_display.save(os.path.join('static', display))
+
         weight_path = './weight/mnist.pth'
         model = LeNet().to(device)
         img, preds = evaluation(img, weight_path, model)
         preds = int(preds)
-        data = {'num': preds,'filename': fname}
-    return render_template('upload_mnist.html', num= data['num'], filename = data['filename'])
+    return render_template('upload_mnist.html', num=preds, filename=display)
 
 
 @app.route('/mnist/draw_prediction', methods=['POST'])
 def predict():
     if request.method == 'POST':
-        # Access the image
+
         draw = request.form['url']
-        # Removing the useless part of the url.
         draw = draw[init_Base64:]
-        # Decode to bytes array
         draw_decoded = base64.b64decode(draw)
 
         # Fix later(to PIL version)
@@ -91,7 +93,6 @@ def predict():
         img = np.asarray(bytearray(draw_decoded), dtype="uint8")
         img = cv2.imdecode(img, cv2.IMREAD_GRAYSCALE)
         img = cv2.resize(img, (28,28), interpolation = cv2.INTER_AREA)
-        print(img)
         img = Image.fromarray(img)
 
         weight_path = './weight/mnist.pth'
