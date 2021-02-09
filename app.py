@@ -15,7 +15,7 @@ from werkzeug.utils import secure_filename
 import torch
 from torchvision.utils import save_image
 
-from inference import evaluation, mnist_pad_data_preprocess
+from inference import mnist_evaluation, mnist_pad_data_preprocess
 from model import LeNet
 
 #Initialize the useless part of the base64 encoded image.
@@ -52,56 +52,85 @@ def mnist_view():
 def mnist_pad():
     return render_template('draw_mnist.html')
 
+@app.route('/quickdraw')
+def quickdraw():
+    return render_template('draw_quickdraw.html')
 
 @app.route('/mnist/prediction', methods=['POST'])
-def upload_image():
+def mnist_upload_image():
     if request.method == 'POST':
-        f = request.files['file']
-        fname = secure_filename(f.filename)
+        mnist_f = request.files['file']
+        mnist_fname = secure_filename(mnist_f.filename)
         #if f is empty string, nothing will happen.
-        if fname =='':
+        if mnist_fname =='':
             return redirect(url_for('mnist_view'))
         os.makedirs('static', exist_ok = True)
-        f.save(os.path.join('static', fname))
+        mnist_f.save(os.path.join('static', mnist_fname))
 
-        img = Image.open(f, 'r')
+        mnist_img = Image.open(mnist_f, 'r')
 
-        img_display = img.resize((256, 256)) # To display large size image
-        display = 'display_' + fname
-        img_display.save(os.path.join('static', display))
+        mnist_img_display = mnist_img.resize((256, 256)) # To display large size image
+        mnist_display = 'display_' + mnist_fname
+        mnist_img_display.save(os.path.join('static', mnist_display))
 
         weight_path = './weight/mnist.pth'
-        model = LeNet().to(device)
-        img, preds = evaluation(img, weight_path, model)
-        preds = int(preds)
-    return render_template('upload_mnist.html', num=preds, filename=display)
+        mnist_model = LeNet().to(device)
+        mnist_img, mnist_preds = mnist_evaluation(mnist_img, weight_path, mnist_model)
+        mnist_preds = int(mnist_preds)
+    return render_template('upload_mnist.html', num=mnist_preds, filename=mnist_display)
 
 
 @app.route('/mnist/draw_prediction', methods=['POST'])
-def predict():
+def mnist_predict():
     if request.method == 'POST':
 
-        draw = request.form['url']
-        draw = draw[init_Base64:]
-        draw_decoded = base64.b64decode(draw)
+        mnist_draw = request.form['url']
+        mnist_draw = mnist_draw[init_Base64:]
+        mnist_draw_decoded = base64.b64decode(mnist_draw)
 
         # Fix later(to PIL version)
         # Conver bytes array to PIL Image  
         # imageStream = io.BytesIO(draw_decoded)
         # img = Image.open(imageStream)
 
-        img = np.asarray(bytearray(draw_decoded), dtype="uint8")
-        img = cv2.imdecode(img, cv2.IMREAD_GRAYSCALE)
-        img = cv2.resize(img, (28,28), interpolation = cv2.INTER_AREA)
-        img = Image.fromarray(img)
+        mnist_img = np.asarray(bytearray(mnist_draw_decoded), dtype="uint8")
+        mnist_img = cv2.imdecode(mnist_img, cv2.IMREAD_GRAYSCALE)
+        mnist_img = cv2.resize(mnist_img, (28,28), interpolation = cv2.INTER_AREA)
+        mnist_img = Image.fromarray(mnist_img)
 
         weight_path = './weight/mnist.pth'
-        model = LeNet().to(device)
-        img, pred = evaluation(img, weight_path, model)
+        mnist_model = LeNet().to(device)
+        mnist_img, mnist_pred = mnist_evaluation(mnist_img, weight_path, mnist_model)
 
-        pred = int(pred)
+        mnist_pred = int(mnist_pred)
+    return render_template('draw_mnist.html', prediction=mnist_pred)
 
-    return render_template('draw_mnist.html', prediction=pred)
+@app.route('/quickdraw/prediction', methods=['POST'])
+def quickdraw_predict():
+    if request.method == 'POST':
+        quick_draw = request.form['url']
+        quick_draw = quick_draw[init_Base64:]
+        quick_draw_decoded = base64.b64decode(quick_draw)
+
+        # Fix later(to PIL version)
+        # Conver bytes array to PIL Image
+        # imageStream = io.BytesIO(draw_decoded)
+        # img = Image.open(imageStream)
+
+        quick_img = np.asarray(bytearray(quick_draw_decoded), dtype="uint8")
+        quick_img = cv2.imdecode(quick_img, cv2.IMREAD_GRAYSCALE)
+        quick_img = cv2.resize(quick_img, (28,28), interpolation = cv2.INTER_AREA)
+        quick_img = Image.fromarray(quick_img)
+
+        #weight_path = './weight/mnist.pth'
+        #mnist_model = LeNet().to(device)
+        #mnist_img, mnist_pred = quickdraw_evaluation(mnist_img, weight_path, mnist_model)
+
+        quick_pred = int(quick_pred)
+        #quick_label = quickdraw_class_Dic[quick_pred]
+    return render_template('draw_quickdraw.html', label=quickdraw_label)
+
+    return None
 
 for f_ext in file_extensions:  # Delete file after display
     for img_file in glob.glob(f'./static/*.{f_ext}'):

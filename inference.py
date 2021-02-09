@@ -13,14 +13,14 @@ transform = transforms.Compose([
     transforms.ToTensor(),
     ])
 
-def evaluation(inputs, weight_path, model):
+def mnist_evaluation(inputs, weight_path, model):
 
     inputs = transform(inputs)
     inputs = torch.unsqueeze(inputs, dim=0)
     # inputs = inputs.view(1,1,28,28)
     # inputs = inputs[:,-1,:,:]
-    print(inputs.size)    
-    model.load_state_dict(torch.load(weight_path))
+    print(inputs.size)  
+    model.load_state_dict(torch.load(weight_path, map_location=device)) #CPU Comparable. 
     model.eval()
     with torch.no_grad():
         
@@ -30,6 +30,13 @@ def evaluation(inputs, weight_path, model):
         preds = torch.argmax(preds, 1)
 
 
+    return inputs, preds
+
+def quickdraw_evaluation(inputs, weight_path, model):
+    
+    inputs = transform(inputs)
+    inputs = torch.unsqeeze(inputs, dim =0)
+    #Evaluation function here
     return inputs, preds
 
 
@@ -60,4 +67,25 @@ def mnist_pad_data_preprocess(img):
         img_pil = Image.fromarray(np.uint8(img_resize), 'L')
         return img_pil
     return img
+
+def class_dict_extraction(path, fileformat):
+    #Look for all files with specific format and put it in as dictionary
+    files = glob.glob(path + '/*.' +fileformat)
+    #Add files in dictionary
+    dic = class_dictionary()
+    for key, value in enumerate(files):       
+        #Get rid of the path and print label only
+        label = value[len(path)+1 : -len(fileformat)-1]
+        dic.add(key, label)
+    return dic
+
+class class_dictionary(dict):
+    #create dictionary class
+    #init function
+    def __init__(self):
+        self = dict()
+    #Function to add key and value
+    def add(self, key, value):
+        self[key] = value
+
 

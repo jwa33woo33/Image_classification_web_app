@@ -8,13 +8,14 @@ from PIL import Image
 from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms as transforms
 
+from inference as import class_dict_extraction
 
 transform = transforms.Compose([
     transforms.ToTensor(),
     ])
 
 
-quick_draw_class_map = {0: 'baseball', 1: 'birthday cake', 2: 'broccoli', 
+#quick_draw_class_map = {0: 'baseball', 1: 'birthday cake', 2: 'broccoli', 
     3: 'animal migration', 4: 'aircraft carrier', 5: 'bat', 
     6: 'binoculars', 7: 'bulldozer', 8: 'boomerang', 9: 'bee', 
     10: 'anvil', 11: 'bear', 12: 'airplane', 13: 'bench', 
@@ -29,7 +30,9 @@ quick_draw_class_map = {0: 'baseball', 1: 'birthday cake', 2: 'broccoli',
     42: 'ambulance', 43: 'baseball bat', 44: 'bracelet', 
     45: 'asparagus', 46: 'alarm clock', 47: 'The Mona Lisa', 
     48: 'arm', 49: 'brain'}
-
+#Make dictionary for quick draw class map with file path
+path = ' '
+quick_draw_class_map = class_dict_extraction(path, 'npy')
 
 
 class MnistDataset(Dataset):
