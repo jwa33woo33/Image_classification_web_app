@@ -1,4 +1,5 @@
 import sys
+import glob
 
 from PIL import Image
 import numpy as np
@@ -70,7 +71,8 @@ def mnist_pad_data_preprocess(img):
 
 def class_dict_extraction(path, fileformat):
     #Look for all files with specific format and put it in as dictionary
-    files = glob.glob(path + '/*.' +fileformat)
+    files = sorted(glob.glob(path + '/*.' +fileformat))
+
     #Add files in dictionary
     dic = class_dictionary()
     for key, value in enumerate(files):       

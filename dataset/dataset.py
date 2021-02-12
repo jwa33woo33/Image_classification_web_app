@@ -8,13 +8,13 @@ from PIL import Image
 from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms as transforms
 
-from inference as import class_dict_extraction
+from inference import class_dict_extraction
 
 transform = transforms.Compose([
     transforms.ToTensor(),
     ])
 
-
+'''
 #quick_draw_class_map = {0: 'baseball', 1: 'birthday cake', 2: 'broccoli', 
     3: 'animal migration', 4: 'aircraft carrier', 5: 'bat', 
     6: 'binoculars', 7: 'bulldozer', 8: 'boomerang', 9: 'bee', 
@@ -30,8 +30,9 @@ transform = transforms.Compose([
     42: 'ambulance', 43: 'baseball bat', 44: 'bracelet', 
     45: 'asparagus', 46: 'alarm clock', 47: 'The Mona Lisa', 
     48: 'arm', 49: 'brain'}
+'''
 #Make dictionary for quick draw class map with file path
-path = ' '
+path = '/home/ubuntu/hdd_ext/hdd4000/quickdraw_dataset'
 quick_draw_class_map = class_dict_extraction(path, 'npy')
 
 
@@ -79,17 +80,26 @@ class QuickDrawDataset(Dataset):
         count = 0
         for file in self.files:
             images = np.load(file)
+            print(file)
             images = images.astype('float32') / 255.
-            images = images[0:15000, :] # Subset only 15000 data(There are too many!!)
+            print(len(images))
+            images = images[0:5, :] # Subset only 15000 data(There are too many!!)
+            print(len(images))
             images = images.reshape(-1, 28, 28)
+            print(len(images))
             self.all_x.append(images)
+            print(len(images))
 
             label_ids = [count for _ in range(len(images))]
             label_ids = np.array(label_ids).astype('float32')
             label_ids = label_ids.reshape(label_ids.shape[0], 1)
             self.all_y.append(label_ids)
-
             labels = os.path.splitext(os.path.basename(file).split('_')[-1])[0]
+
+            #find label id (key) from the labels (values) in dictionary
+            #label_ids = list(quick_draw_class_map.keys())[list(quick_draw_class_map.values()).index(labels)]
+            #self.all_y.append(label_ids)
+            print(label_ids, count)
             count += 1
         return self.all_x, self.all_y
 

@@ -1,5 +1,6 @@
 import os
 import sys
+import glob
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from random import randint
 
@@ -31,13 +32,14 @@ if device == 'cuda':
     torch.cuda.manual_seed_all(1234)
 
 learning_rate = 0.005
-epochs = 20
+epochs = 100
 batch_size = 128
 
-data_path = '../dataset/QuickDraw'
-
+#data_path = '../dataset/QuickDraw'
+data_path  ='/home/ubuntu/hdd_ext/hdd4000/quickdraw_dataset'
+print("Train data start")
 train_data = QuickDrawDataset(data_path)
-
+print("Train data load")
 train_len = int(len(train_data) * 0.8)
 valid_len = len(train_data) - train_len
 train_set, valid_set = random_split(train_data, [train_len, valid_len])
@@ -52,7 +54,7 @@ valid_loader = DataLoader(dataset=valid_set,
                           shuffle=False,
                           drop_last=True)
 
-
+print("model starts")
 model = LeNet(num_classes=50).to(device)
 
 criterion = nn.CrossEntropyLoss().to(device)
@@ -143,6 +145,7 @@ for epoch in range(epochs):
     print(f'training loss: {epoch_loss:.4f}, training accuracy: {epoch_acc:.2f} %(top1) {top5_epoch_acc:.2f}%(top5)')
     print(f'validation loss: {val_epoch_loss:.4f}, validation accuracy: {val_epoch_acc:.2f}%(top1) {top5_val_epoch_acc:.2f}%(top5)')
 
+    if epoch//10 == 0:
+        # Save model
+        torch.save(model.state_dict(), f'../weight/quickdraw_{epochs}.pth')
 
-# Save model
-torch.save(model.state_dict(), f'../weight/quickdraw_{epochs}.pth')
