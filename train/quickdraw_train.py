@@ -55,7 +55,7 @@ valid_loader = DataLoader(dataset=valid_set,
                           drop_last=True)
 
 print("model starts")
-model = LeNet(num_classes=50).to(device)
+model = LeNet(num_classes=345).to(device)
 
 criterion = nn.CrossEntropyLoss().to(device)
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)

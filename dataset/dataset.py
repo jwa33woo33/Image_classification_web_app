@@ -56,18 +56,19 @@ class MnistDataset(Dataset):
 
 class QuickDrawDataset(Dataset):
     def __init__(self, path, transforms=None):
-        self.files = glob.glob(path + '/*')
-        self.all_x = []
-        self.all_y = []
+        self.files = sorted(glob.glob(path + '/*'))
+        self.all_x =[]
+        self.all_y =[]
+
         self.image_ids, self.label_ids = self.load_data()
         self.transform = transform
 
         self.image_ids = np.vstack(self.image_ids)
         self.label_ids = np.vstack(self.label_ids)
-        
+    
     def __len__(self):
         return len(self.image_ids)
-
+    
     def __getitem__(self, idx):
         image = self.image_ids[idx]
         label_id = int(self.label_ids[idx])
@@ -77,18 +78,46 @@ class QuickDrawDataset(Dataset):
         return image, label_id
     
     def load_data(self):
-        count = 0
+        """
+        #define dictionary type datastructure
+        images_dict = {}
         for file in self.files:
             images = np.load(file)
-            print(file)
             images = images.astype('float32') / 255.
-            print(len(images))
-            images = images[0:5, :] # Subset only 15000 data(There are too many!!)
-            print(len(images))
+            images = images[0:num_data, :] # Subset only 15000 data(There are too many!!)
+            images = images.flatten() # Make it to 1D array
+            #extract labels
+            labels = os.path.splitext(os.path.basename(file).split('_')[-1])[0]
+            #find label id (key) from the labels (values) in dictionary
+            label_ids = list(quick_draw_class_map.keys())[list(quick_draw_class_map.values()).index(labels)]
+            images_dict[label_ids]=images
+            print(file)
+
+        label_ids = list(images_dict.keys())
+        images = list(images_dict.values())
+        #We need to pull the image one by one
+        #Label ID
+        label_ids_total=[]
+        for ids in label_ids:
+            for _ in range(num_data):
+                label_ids_total.append(ids)
+        #Image
+        img_reshape = [x.reshape(num_data,-1) for x in images]
+        print(np.array(img_reshape).shape)
+        images_total = [elem for twod in img_reshape for elem in twod]
+        print(np.array(images_total).shape)
+        print(np.array(label_ids_total).shape)
+        
+        return images_total , label_ids_total
+        """
+        count = 0
+        all_x = []
+        for file in self.files:
+            images = np.load(file)
+            images = images.astype('float32') / 255.
+            images = images[0:10000, :] # Subset only 15000 data(There are too many!!)
             images = images.reshape(-1, 28, 28)
-            print(len(images))
-            self.all_x.append(images)
-            print(len(images))
+            all_x.append(images.copy())
 
             label_ids = [count for _ in range(len(images))]
             label_ids = np.array(label_ids).astype('float32')
@@ -96,13 +125,9 @@ class QuickDrawDataset(Dataset):
             self.all_y.append(label_ids)
             labels = os.path.splitext(os.path.basename(file).split('_')[-1])[0]
 
-            #find label id (key) from the labels (values) in dictionary
-            #label_ids = list(quick_draw_class_map.keys())[list(quick_draw_class_map.values()).index(labels)]
-            #self.all_y.append(label_ids)
-            print(label_ids, count)
+            print(count)
             count += 1
-        return self.all_x, self.all_y
-
+        return all_x, self.all_y
 
 class LandmarkDataset(Dataset):
     def __init__(self, transforms=None):
