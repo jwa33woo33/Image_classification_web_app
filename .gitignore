@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
 *.pth
 dataset/MNIST
 dataset/QuickDraw
->>>>>>> a5fec2265ee448a989077a35f677351010f7891f
