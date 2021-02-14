@@ -15,7 +15,7 @@ from werkzeug.utils import secure_filename
 import torch
 from torchvision.utils import save_image
 
-from inference import mnist_evaluation, mnist_pad_data_preprocess
+from inference import mnist_evaluation, quickdraw_evaluation
 from model import LeNet
 
 #Initialize the useless part of the base64 encoded image.
@@ -107,6 +107,8 @@ def mnist_predict():
 
 @app.route('/quickdraw/prediction', methods=['POST'])
 def quickdraw_predict():
+    quickdraw_animal_map = ['ant', 'bat', 'bear', 'bee', 'bird', 'butterfly', 'camel', 'cat', 'cow', 'dog', 'dolphin', 'dragon', 'duck', 'elephant', 'fish', 'flamingo', 'frog', 'giraffe', 'hedgehog', 'horse', 'kangaroo', 'lion', 'lobster', 'mermaid', 'monkey', 'mosquito', 'mouse', 'octopus', 'owl', 'panda', 'penguin', 'pig', 'rabbit', 'raccoon', 'shark', 'sheep', 'snail', 'snake', 'spider', 'squirrel', 'teddy-bear', 'tiger', 'whale', 'zebra']
+
     if request.method == 'POST':
         quick_draw = request.form['url']
         quick_draw = quick_draw[init_Base64:]
@@ -120,17 +122,17 @@ def quickdraw_predict():
         quick_img = np.asarray(bytearray(quick_draw_decoded), dtype="uint8")
         quick_img = cv2.imdecode(quick_img, cv2.IMREAD_GRAYSCALE)
         quick_img = cv2.resize(quick_img, (28,28), interpolation = cv2.INTER_AREA)
+        print(quick_img)
         quick_img = Image.fromarray(quick_img)
 
-        #weight_path = './weight/mnist.pth'
-        #mnist_model = LeNet().to(device)
-        #mnist_img, mnist_pred = quickdraw_evaluation(mnist_img, weight_path, mnist_model)
+        weight_path = './weight/quickdraw_90_animal.pth'
+        quick_model = LeNet(num_classes=44).to(device)
+        quick_img, quick_pred = quickdraw_evaluation(quick_img, weight_path, quick_model)
 
         quick_pred = int(quick_pred)
-        #quick_label = quickdraw_class_Dic[quick_pred]
-    return render_template('draw_quickdraw.html', label=quickdraw_label)
-
-    return None
+        print(quick_pred)
+        quick_label = quickdraw_animal_map[quick_pred]
+    return render_template('draw_quickdraw.html', prediction=quick_label)
 
 for f_ext in file_extensions:  # Delete file after display
     for img_file in glob.glob(f'./static/*.{f_ext}'):

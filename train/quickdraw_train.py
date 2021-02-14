@@ -21,7 +21,7 @@ from torchvision import datasets, models
 from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import transforms
 
-from model import LeNet
+from model import LeNet, QDCNN
 from dataset.dataset import QuickDrawDataset
 
 
@@ -55,7 +55,8 @@ valid_loader = DataLoader(dataset=valid_set,
                           drop_last=True)
 
 print("model starts")
-model = LeNet(num_classes=345).to(device)
+#model = QDCNN(num_classes=44).to(device)
+model = LeNet(num_classes=44).to(device)
 
 criterion = nn.CrossEntropyLoss().to(device)
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
@@ -125,10 +126,10 @@ for epoch in range(epochs):
                 if val_label[i] in top5_val_preds[i]:
                     top5_valid_correct += 1
 
-    epoch_loss = train_loss // total_batch_train
-    epoch_acc = 100 * train_correct // train_total
-    top5_epoch_acc = 100 * top5_train_correct // train_total
-    top5_val_epoch_acc = 100 * top5_valid_correct // valid_total
+    epoch_loss = train_loss / total_batch_train
+    epoch_acc = 100 * train_correct / train_total
+    top5_epoch_acc = 100 * top5_train_correct / train_total
+    top5_val_epoch_acc = 100 * top5_valid_correct / valid_total
 
     train_loss_log.append(epoch_loss)
     train_accuracy_log.append(epoch_acc)
@@ -145,7 +146,7 @@ for epoch in range(epochs):
     print(f'training loss: {epoch_loss:.4f}, training accuracy: {epoch_acc:.2f} %(top1) {top5_epoch_acc:.2f}%(top5)')
     print(f'validation loss: {val_epoch_loss:.4f}, validation accuracy: {val_epoch_acc:.2f}%(top1) {top5_val_epoch_acc:.2f}%(top5)')
 
-    if epoch//10 == 0:
+    if epoch%10 == 0:
         # Save model
-        torch.save(model.state_dict(), f'../weight/quickdraw_{epochs}.pth')
+        torch.save(model.state_dict(), f'../weight/quickdraw_{epoch}_animal.pth')
 

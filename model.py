@@ -34,6 +34,32 @@ class LeNet(nn.Module):
 # model = LeNet().to(device)
 # print(summary(model, input_size=(1,28,28), batch_size=batch_size, device=device))
 
+class QDCNN(nn.Module):
+    def __init__(self, num_classes = 345):
+        super().__init__()
+        self.c1 = nn.Sequential(nn.Conv2d(1, 5, kernel_size=3, stride=1, padding = 1), nn.ReLU(inplace=True))
+        self.c2 = nn.Sequential(nn.Conv2d(5, 5, kernel_size=3, stride=1, padding = 1), nn.ReLU(inplace=True))
+        self.c3 =nn.Sequential(nn.Conv2d(5, 5, kernel_size=3, stride=1, padding =1), nn.ReLU(inplace=True))
+        self.l1 = nn.Linear(5*14*14, 700)
+        self.l2 = nn.Linear(700, 500)
+        self.l3 = nn.Linear(500, 400)
+        self.l4 = nn.Linear(400, 345)
+    
+    def forward(self, x):
+        x = self.c1(x)
+        x = self.c2(x)
+        x = self.c3(x)
+        x = F.max_pool2d(x, 2)
+        x = x.view(-1, 5*14*14)
+        x = self.l1(x)
+        #x = nn.ReLU(x)
+        x = self.l2(x)
+        #x = nn.ReLU(x)
+        x = self.l3(x)
+        #x = nn.ReLU(x)
+        x = self.l4(x)
+        return x
+
 class Swish(torch.autograd.Function):
     @staticmethod
     def forward(ctx, i):

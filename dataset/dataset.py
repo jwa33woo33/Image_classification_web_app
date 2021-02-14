@@ -34,7 +34,8 @@ transform = transforms.Compose([
 #Make dictionary for quick draw class map with file path
 path = '/home/ubuntu/hdd_ext/hdd4000/quickdraw_dataset'
 quick_draw_class_map = class_dict_extraction(path, 'npy')
-
+#Quick draw class category
+cat1 = [9, 23, 26,29,34,52,57,67,84,94,95,98,102,106,119,120,128,132,144,150,162,177,179,186,189,191,194,204,207,211,221,225,238,239,260,261,271,272,279,284,307,312,336,343] #Living creature (animal + insects)
 
 class MnistDataset(Dataset):
     def __init__(self, path, transforms=None):
@@ -55,10 +56,11 @@ class MnistDataset(Dataset):
 
 
 class QuickDrawDataset(Dataset):
-    def __init__(self, path, transforms=None):
+    def __init__(self, path, cat=cat1, transforms=None):
         self.files = sorted(glob.glob(path + '/*'))
         self.all_x =[]
         self.all_y =[]
+        self.cat = cat
 
         self.image_ids, self.label_ids = self.load_data()
         self.transform = transform
@@ -111,22 +113,26 @@ class QuickDrawDataset(Dataset):
         return images_total , label_ids_total
         """
         count = 0
+        
         all_x = []
+        ids = 0
         for file in self.files:
-            images = np.load(file)
-            images = images.astype('float32') / 255.
-            images = images[0:10000, :] # Subset only 15000 data(There are too many!!)
-            images = images.reshape(-1, 28, 28)
-            all_x.append(images.copy())
-
-            label_ids = [count for _ in range(len(images))]
-            label_ids = np.array(label_ids).astype('float32')
-            label_ids = label_ids.reshape(label_ids.shape[0], 1)
-            self.all_y.append(label_ids)
-            labels = os.path.splitext(os.path.basename(file).split('_')[-1])[0]
-
-            print(count)
+            if count in self.cat:
+                images = np.load(file)
+                images = images.astype('float32') / 255.
+                images = images[0:15000, :] # Subset only 15000 data(There are too many!!)
+                images = images.reshape(-1, 28, 28)
+                all_x.append(images.copy())
+                
+                label_ids = [ids for _ in range(len(images))]
+                label_ids = np.array(label_ids).astype('float32')
+                label_ids = label_ids.reshape(label_ids.shape[0], 1)
+                self.all_y.append(label_ids)
+                labels = os.path.splitext(os.path.basename(file).split('_')[-1])[0]
+                ids += 1
+                print(count)
             count += 1
+            
         return all_x, self.all_y
 
 class LandmarkDataset(Dataset):
