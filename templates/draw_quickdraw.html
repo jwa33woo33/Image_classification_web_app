@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Drawing App</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='draw_quickdraw.js') }}"></script>
+<style>
+        .btn {
+                text-decoration:none;
+                font-size: 2rem;
+                color: White;
+                padding: 10px 20px 10px 20px;
+                margin: 20px;
+                display: inline-block;
+                border-radius: 10px;
+                transition:all 0.1s;
+                text-shadow: 0px -2px rgba(0, 0, 0, 0.44);
+                font-family: 'Lobster', cursive;
+        }
+        .btn:active{
+                transform: translateY(3px);
+        }
+        .btn.blue{
+                background-color: #1f75d9;
+                border-bottom:5px solid #165195;
+        }
+        .btn.blue:active{
+                border-bottom:2px solid #165195;
+        }
+</style>
+
+</head>
+    <header>
+	    <h2> Draw Animals on the Pad </h2>
+	    <h3> We will try to predict what you draw </h3>
+	    <h3> Here is the choices for your drawing: </h3>
+	    <h5> ant, bat, bear, bee, bird, butterfly, camel, cat, cow, dog, dolphin, 
+		    dragon, duck, elephant, fish, flamingo, frog, giraffe, hedgehog, horse, 
+		    kangaroo, lion, lobster, mermaid, monkey, mosquito, mouse, octopus, owl, panda, 
+		penguin, pig, rabbit, raccoon, shark, sheep, snail, snake, spider, squirrel, teddy-bear, tiger, whale, zebra </h6>
+
+    
+    </header>
+
+<body>
+	<!-- <form id = "myForm" action="{{ url_for('quickdraw_predict')}}" method="POST" enctype="multipart/form-data"> -->
+	<form action = "http://localhost:9000/quickdraw/prediction" method = "POST" enctype =  "multipart/form-data">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style_draw_mnist.css') }}">
+	<div class = "container">
+
+        <canvas id="canvas", name ="draw" width="400" height="400">
+        <script type="text/javascript">
+            $(document).ready(function() {
+                drawCanvas();
+            });
+        </script>
+        </canvas>
+        <input type="hidden" id = 'url' name="url" value="">
+	<button type="button" onclick = "window.location.reload();"> Clear </a></button> 
+        <input type="submit" id = 'quickdraw_predict' value="quickdraw_label" onclick="return save();">
+	</div>
+    </form>
+    <div>
+    	{% if prediction %}
+		<p> <h4> My prediction is : {{prediction}} </h4></p>
+	{% endif %}
+    </div>
+
+    <a class = "btn blue" href="../">Back</a>
+
+</body>
+
+</html>
