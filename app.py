@@ -56,6 +56,7 @@ def mnist_pad():
 def quickdraw():
     return render_template('draw_quickdraw.html')
 
+
 @app.route('/mnist/prediction', methods=['POST'])
 def mnist_upload_image():
     if request.method == 'POST':
@@ -105,6 +106,7 @@ def mnist_predict():
         mnist_pred = int(mnist_pred)
     return render_template('draw_mnist.html', prediction=mnist_pred)
 
+
 @app.route('/quickdraw/prediction', methods=['POST'])
 def quickdraw_predict():
     quickdraw_animal_map = ['ant', 'bat', 'bear', 'bee', 'bird', 'butterfly', 'camel', 'cat', 'cow', 'dog', 'dolphin', 'dragon', 'duck', 'elephant', 'fish', 'flamingo', 'frog', 'giraffe', 'hedgehog', 'horse', 'kangaroo', 'lion', 'lobster', 'mermaid', 'monkey', 'mosquito', 'mouse', 'octopus', 'owl', 'panda', 'penguin', 'pig', 'rabbit', 'raccoon', 'shark', 'sheep', 'snail', 'snake', 'spider', 'squirrel', 'teddy-bear', 'tiger', 'whale', 'zebra']
@@ -122,7 +124,6 @@ def quickdraw_predict():
         quick_img = np.asarray(bytearray(quick_draw_decoded), dtype="uint8")
         quick_img = cv2.imdecode(quick_img, cv2.IMREAD_GRAYSCALE)
         quick_img = cv2.resize(quick_img, (28,28), interpolation = cv2.INTER_AREA)
-        print(quick_img)
         quick_img = Image.fromarray(quick_img)
 
         weight_path = './weight/quickdraw_90_animal.pth'
@@ -130,9 +131,34 @@ def quickdraw_predict():
         quick_img, quick_pred = quickdraw_evaluation(quick_img, weight_path, quick_model)
 
         quick_pred = int(quick_pred)
-        print(quick_pred)
         quick_label = quickdraw_animal_map[quick_pred]
     return render_template('draw_quickdraw.html', prediction=quick_label)
+
+
+@app.route('/landmark/prediction', methods=['POST'])
+def landmark_upload_image():
+    if request.method == 'POST':
+        landmark_f = request.files['file']
+        landmark_fname = secure_filename(landmark_f.filename)
+
+        if landmark_fname =='':
+            return redirect(url_for('landmark_view'))
+        os.makedirs('static', exist_ok = True)
+        landmark_f.save(os.path.join('static', landmark_fname))
+
+        landmark_img = Image.open(landmark_f, 'r')
+
+        landmark_img_display = landmark_img.resize((800, 800))
+        landmark_display = 'display_' + landmark_fname
+        landmark_img_display.save(os.path.join('static', landmark_display))
+
+        weight_path = './weight/ResNext101_448_300_141_390000.pth'
+        # weight_path = './weight/effnet_448_512_34_190000.pth'
+        landmark_model = LeNet().to(device)
+        landmark_img, landmark_preds = landmark_evaluation(landmark_img, weight_path, landmark_model)
+        landmark_preds = int(landmark_preds)
+    return render_template('upload_landmark.html', num=landmark_preds, filename=landmark_display)
+
 
 for f_ext in file_extensions:  # Delete file after display
     for img_file in glob.glob(f'./static/*.{f_ext}'):
