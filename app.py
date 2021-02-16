@@ -170,8 +170,9 @@ def landmark_upload_image():
 
         landmark_img, landmark_preds = landmark_evaluation(landmark_img, weight_path, model)
         landmark_preds = landmark_classmap[str(int(landmark_preds))]
+        print(landmark_preds, landmark_fname)
 
-    return render_template('upload_landmark.html', pred=landmark_preds, filename=landmark_img_display)
+    return render_template('upload_landmark.html', pred=landmark_preds, filename=landmark_fname)
 
 
 for f_ext in file_extensions:  # Delete file after display

@@ -7,3 +7,4 @@ json
 keras
 pillow
 efficientnet_pytorch
+albumentations
