@@ -29,21 +29,20 @@
 </head>
 <body>
 	<h2> Upload LandMark Dataset </h2>
-	<h4> digits 0 ~ 9 </h4>
 	<form action = "http://localhost:9000/landmark/prediction" method = "POST" enctype =  "multipart/form-data">
 	<input type = "file" name = "file" />
 	<input type = "submit"/>
 	</form>
 	<div>
 		<p>
-			{% if  num == None %}
+			{% if  pred == None %}
 				{% if filename %}
 					<h5> This is not LandMark image. Please Re-upload the image </h5>
 				{% else %}
 					<h5> File is empty. Please upload the file </h5>
 				{% endif %}
 			{% else %}
-				<p> Prediction: {{num}} </br> </p>
+				<p> Prediction: {{pred}} </br> </p>
 				<!-- <p> File name : {{filename}} </br> </p> -->
 				{% if filename %}
 					<img src= "{{url_for('static', filename = filename )}}" >

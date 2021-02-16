@@ -3,6 +3,7 @@ import glob
 import json
 import base64
 import io
+import json
 
 from PIL import Image
 import numpy as np
@@ -141,6 +142,9 @@ def quickdraw_predict():
 
 @app.route('/landmark/prediction', methods=['POST'])
 def landmark_upload_image():
+    with open('./dataset/landmark_classmap.json', 'r', encoding='UTF-8-sig') as json_file:
+        landmark_classmap = json.load(json_file)
+
     if request.method == 'POST':
         landmark_f = request.files['file']
         landmark_fname = secure_filename(landmark_f.filename)
@@ -165,8 +169,9 @@ def landmark_upload_image():
         model = ResNext101Landmark(num_classes).to(device)
 
         landmark_img, landmark_preds = landmark_evaluation(landmark_img, weight_path, model)
+        landmark_preds = landmark_classmap[str(int(landmark_preds))]
 
-    return render_template('upload_landmark.html', num=landmark_preds, filename=landmark_img_display)
+    return render_template('upload_landmark.html', pred=landmark_preds, filename=landmark_img_display)
 
 
 for f_ext in file_extensions:  # Delete file after display
