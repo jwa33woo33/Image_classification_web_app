@@ -3,6 +3,7 @@ import glob
 
 from PIL import Image
 import numpy as np
+import cv2
 
 import torch
 import torchvision.transforms as transforms
@@ -77,9 +78,15 @@ class ClassDict(dict):
 
 
 def landmark_evaluation(inputs, weight_path, model):
-    inputs = transform(inputs)
+    inputs = np.array(inputs)
+    inputs = cv2.cvtColor(inputs, cv2.COLOR_BGR2RGB)
 
+    augmented = transform_landmark(image=inputs)
+    inputs = augmented['image']
+    
+    inputs = torch.unsqueeze(inputs, dim=0)
     model.load_state_dict(torch.load(weight_path, map_location=device))
+
     model.eval()
     with torch.no_grad():
         inputs = inputs.to(device)

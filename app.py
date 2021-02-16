@@ -15,13 +15,13 @@ from werkzeug.utils import secure_filename
 import torch
 from torchvision.utils import save_image
 
-from inference import mnist_evaluation, quickdraw_evaluation
-from model import LeNet
+from inference import mnist_evaluation, quickdraw_evaluation, landmark_evaluation, transform_landmark
+from model import LeNet, ResNext101Landmark
 
 #Initialize the useless part of the base64 encoded image.
 init_Base64 = 21
 
-file_extensions = set(['png', 'jpg', 'jpeg', 'gif'])
+file_extensions = set(['png', 'PNG', 'jpg', 'JPG', 'jpeg', 'JPEG', 'gif', 'GIF'])
 
 save_img_path = './static/images/'
 
@@ -55,6 +55,10 @@ def mnist_pad():
 @app.route('/quickdraw')
 def quickdraw():
     return render_template('draw_quickdraw.html')
+
+@app.route('/landmark/upload')
+def landmark():
+    return render_template('upload_landmark.html')
 
 
 @app.route('/mnist/prediction', methods=['POST'])
@@ -148,16 +152,21 @@ def landmark_upload_image():
 
         landmark_img = Image.open(landmark_f, 'r')
 
-        landmark_img_display = landmark_img.resize((800, 800))
+        origin_w, origin_h = landmark_img.size
+        landmark_img_display = landmark_img.resize((origin_w, origin_h))
         landmark_display = 'display_' + landmark_fname
         landmark_img_display.save(os.path.join('static', landmark_display))
 
-        weight_path = './weight/ResNext101_448_300_141_390000.pth'
+        num_classes = 1049
         # weight_path = './weight/effnet_448_512_34_190000.pth'
-        landmark_model = LeNet().to(device)
-        landmark_img, landmark_preds = landmark_evaluation(landmark_img, weight_path, landmark_model)
-        landmark_preds = int(landmark_preds)
-    return render_template('upload_landmark.html', num=landmark_preds, filename=landmark_display)
+        weight_path = './weight/ResNext101_448_300_141_390000.pth'
+        
+        # model = EfficientNetLandmark(1, num_classes)
+        model = ResNext101Landmark(num_classes).to(device)
+
+        landmark_img, landmark_preds = landmark_evaluation(landmark_img, weight_path, model)
+
+    return render_template('upload_landmark.html', num=landmark_preds, filename=landmark_img_display)
 
 
 for f_ext in file_extensions:  # Delete file after display
