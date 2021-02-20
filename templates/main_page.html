@@ -10,18 +10,19 @@ model : vairous-->
 	<style>
 		#container {
         		width:960px;
-        		margin:0 auto;
+        		margin-left: auto;
+			margin-right:auto;
         		text-align:center;
 		}
 		.tab {
         		list-style: none;
         		margin: 0;
-        		padding: 0;
+			padding: 0;
 			overflow: hidden;
 			text-align:center;
 		}
 		.tab li{
-			float: left;
+			display:inline-block;
 		}       
 		.tab li a {
 			display: inline-block;
@@ -55,7 +56,7 @@ model : vairous-->
                         text-align:center;
                 }
                 .subtab li{
-                        float: left;
+                        display: inline-block;
                 }
                 .subtab li a {
                         display: inline-block;
@@ -157,8 +158,27 @@ model : vairous-->
 	
 
 		<div id="tab2", class = "tabcontent">
-			<h3> Object-Detection </h3>
-			<p> Landmark </p>
+			<ul class = "subtab">
+				<li class = "subproject" data-tab = "tab9"><a href="#"> One Stage </a></li>
+				<li data-tab = "tab10"><a href="#"> Two Stage </a></li>
+			</ul>
+			<div id = "tab9", class="subtabcontent project">
+				<ul class = "liltab">
+					<div class = "bot">
+						<li class = "subsubproject" data-tab = "tab11"><a href ="#"> YOLO </a></li>
+						<li data-tab = "tab12" ><a href = "#"> ssd </a><li>
+                                                <li data-tab = "tab13" ><a href = "#"> YOLO v2 </a><li>
+                                                <li data-tab = "tab14" ><a href = "./objdect/yolov3"> YOLO v3 </a><li>
+					</div></ul>
+			</div>
+			<div id = "tab10", class="subtabcontent project">
+                                <ul class = "liltab">
+                                        <div class = "bot">
+                                                <li class = "subsubproject" data-tab = "tab15"><a href ="#"> rcnn </a></li>
+                                                <li data-tab = "tab16" ><a href = "#"> fast-rcnn </a><li>
+                                                <li data-tab = "tab17" ><a href = "#"> faster-rcnn </a><li>
+                                        </div></ul>
+                        </div>
 		</div>
 
 		<div id="tab3", class ="tabcontent">

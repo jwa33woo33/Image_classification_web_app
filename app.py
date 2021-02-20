@@ -17,6 +17,7 @@ import torch
 from torchvision.utils import save_image
 
 from inference import mnist_evaluation, quickdraw_evaluation, landmark_evaluation, transform_landmark
+from objdec_inference import yolov3_evaluation
 from model import LeNet, ResNext101Landmark
 
 #Initialize the useless part of the base64 encoded image.
@@ -61,6 +62,9 @@ def quickdraw():
 def landmark():
     return render_template('upload_landmark.html')
 
+@app.route('/objdect/yolov3')
+def yolov3():
+    return render_template('upload_yolo_img.html')
 
 @app.route('/mnist/prediction', methods=['POST'])
 def mnist_upload_image():
@@ -150,7 +154,7 @@ def landmark_upload_image():
         landmark_fname = secure_filename(landmark_f.filename)
 
         if landmark_fname =='':
-            return redirect(url_for('landmark_view'))
+            return redirect(url_for('landmark'))
         os.makedirs('static', exist_ok = True)
         landmark_f.save(os.path.join('static', landmark_fname))
 
@@ -174,6 +178,26 @@ def landmark_upload_image():
 
     return render_template('upload_landmark.html', pred=landmark_preds, filename=landmark_fname)
 
+@app.route('/yolov3/prediction', methods=['POST'])
+def yolov3_upload_image():
+    with open('./dataset/coco.names', 'r') as coco_name:
+        coco_classmap = coco_name.read().split("\n")[:-1]
+
+    if request.method == 'POST':
+        yolov3_f = request.files['file']
+        yolov3_fname = secure_filename(yolov3_f.filename)
+
+        if yolov3_fname =='':
+            return redirect(url_for('yolov3'))
+        
+        yolov3_img = Image.open(yolov3_f, 'r')
+        num_classes = 80
+
+        weight_path = './weight/yolov3_chris.pt'
+        yolov3_img = yolov3_evaluation(yolov3_img, weight_path, coco_classmap, yolov3_fname)
+        print(yolov3_fname)
+        
+    return render_template('upload_yolo_img.html', img_filename = yolov3_fname)
 
 for f_ext in file_extensions:  # Delete file after display
     for img_file in glob.glob(f'./static/*.{f_ext}'):

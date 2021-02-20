@@ -28,29 +28,16 @@
 <title>Python Flask Image Upload and Display Example</title>
 </head>
 <body>
-	<h2> Upload LandMark Dataset </h2>
-	<form action = "http://localhost:9000/landmark/prediction" method = "POST" enctype =  "multipart/form-data">
+	<h2> Upload Any Image Pictures </h2>
+	<form action = "http://localhost:9000/yolov3/prediction" method = "POST" enctype =  "multipart/form-data">
 	<input type = "file" name = "file" />
 	<input type = "submit"/>
 	</form>
 	<div>
 		<p>
-			{% if  pred == None %}
-				{% if filename %}
-					<h5> This is not LandMark image. Please Re-upload the image </h5>
-				{% else %}
-					<h5> File is empty. Please upload the file </h5>
-				{% endif %}
-			{% else %}
-				<p> Prediction: {{pred}} </br> </p>
-				<!-- <p> File name : {{filename}} </br> </p> -->
-				{% if filename %}
-					{% if True %}
-						<img src= "{{url_for('static', filename = filename )}}" >
-						<!--<img src= "{{url_for('static', filename = "4a0w4wtd9m.JPG")}}"> -->
-					{% endif %}
-				{% endif %}
-			{% endif %}
+		{% if img_filename  %}
+			<img src= "{{url_for('static', filename = img_filename)}}" >
+		{% endif %}	
 		</p>
 	</div>
 				
