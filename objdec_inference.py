@@ -36,6 +36,7 @@ def yolov3_evaluation(img, weight_path, class_name, filename):
         img.save('./static/'+filename)
     print("image saved")
 
+
 class ImageFolder(Dataset):
     """The ImageFolder Dataset class."""
 
@@ -58,6 +59,7 @@ class ImageFolder(Dataset):
     def __len__(self):
         return len(self.files)
 
+
 def _get_padding(h, w):
     """Generate the size of the padding given the size of the image,
     such that the padded image will be square.
@@ -74,8 +76,10 @@ def _get_padding(h, w):
     pad1, pad2 = dim_diff // 2, dim_diff - dim_diff // 2
     return (0, pad1, 0, pad2) if h <= w else (pad1, 0, pad2, 0)
 
+
 def default_transform(img_size):
     return ComposeWithLabel([PadToSquareWithLabel(fill=(127, 127, 127)), ResizeWithLabel(img_size), tv_tf.ToTensor()])
+
 
 class ComposeWithLabel(tv_tf.Compose):
 
@@ -141,6 +145,7 @@ class PadToSquareWithLabel(object):
         label[..., 1] += padding[1]
         return img, label
 
+
 class ResizeWithLabel(tv_tf.Resize):
 
     def __init__(self, size, interpolation=Image.BILINEAR):
@@ -160,6 +165,7 @@ class ResizeWithLabel(tv_tf.Resize):
         label[...,3] *= scale_h
         return img, label
 
+
 def grouping_class(classes, num_class):
     """
     group the object with the same class into a list.
@@ -177,6 +183,7 @@ def grouping_class(classes, num_class):
         group_index[torch.argmax(class_)].append(index)
 
     return group_index
+
 
 def group_same_class_object(obj_classes, one_hot=True, num_classes=-1):
     """
@@ -205,7 +212,6 @@ def group_same_class_object(obj_classes, one_hot=True, num_classes=-1):
         for idx, obj_class_ in enumerate(obj_classes):
             grouped_index[obj_class_].append(idx)
     return grouped_index
-
 
 
 def run_detection(model, dataloader, device, conf_thres, nms_thres):
@@ -254,6 +260,7 @@ def run_detection(model, dataloader, device, conf_thres, nms_thres):
         break
     return results
 
+
 def untransform_box(bboxes, scale, padding):
     """
     transform the bbox from the scaled image back to the unsclaed image
@@ -270,6 +277,7 @@ def untransform_box(bboxes, scale, padding):
     x -= padding[0]
     y -= padding[1]
     return bboxes
+
 
 def post_process(num_class, result, conf_thres, nms_thres):
     """
@@ -360,6 +368,7 @@ def NMS(bboxes, scores, classes, num_class, conf_thres, nms_thres, center = Fals
 
     return bboxes_result, scores_result, classes_result
 
+
 def IOU(bbox1, bbox2, center=False):
     """
     Calculate IOU for bbox1 with another group of bboxes (bbox2)
@@ -389,6 +398,7 @@ def IOU(bbox1, bbox2, center=False):
     aoi = w_intersect * h_intersect
     iou = aoi / (area1+ area2- aoi+ 1e-10) #1e-10 to avoid 0 division.
     return iou
+
 
 def draw_result(image, boxes, show=False, class_names = None):
     """

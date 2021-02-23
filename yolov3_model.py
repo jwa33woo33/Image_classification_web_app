@@ -137,8 +137,6 @@ class YoloLayer(nn.Module):
             anchor_h = self.anchors[:,1:2].view((1,-1,1,1))
 
             #Get Output
-            torch.save(grid_x, "grid_x_c")
-            torch.save(grid_y, "grid_y_c")
             x_pred = (torch.sigmoid(prediction[...,0]) + grid_x) * self.stride                         # Center x
             y_pred = (torch.sigmoid(prediction[...,1]) + grid_y) * self.stride                         # Center y
             w_pred = torch.exp(prediction[...,2])*anchor_w                                           # Width

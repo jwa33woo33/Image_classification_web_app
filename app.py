@@ -44,34 +44,18 @@ def img_files(filename):
 def main_page():
 	return render_template('main_page.html')
 
+####################
 
 @app.route('/mnist/upload')
 def mnist_view():
     return render_template('upload_mnist.html')
-
-
-@app.route('/mnist/pad')
-def mnist_pad():
-    return render_template('draw_mnist.html')
-
-@app.route('/quickdraw')
-def quickdraw():
-    return render_template('draw_quickdraw.html')
-
-@app.route('/landmark/upload')
-def landmark():
-    return render_template('upload_landmark.html')
-
-@app.route('/objdect/yolov3')
-def yolov3():
-    return render_template('upload_yolo_img.html')
 
 @app.route('/mnist/prediction', methods=['POST'])
 def mnist_upload_image():
     if request.method == 'POST':
         mnist_f = request.files['file']
         mnist_fname = secure_filename(mnist_f.filename)
-        #if f is empty string, nothing will happen.
+
         if mnist_fname =='':
             return redirect(url_for('mnist_view'))
         os.makedirs('static', exist_ok = True)
@@ -89,6 +73,34 @@ def mnist_upload_image():
         mnist_preds = int(mnist_preds)
     return render_template('upload_mnist.html', num=mnist_preds, filename=mnist_display)
 
+@app.route('/')
+def mnist_test():
+    
+    return render_template('test.html')
+
+####################
+
+@app.route('/mnist/pad')
+def mnist_pad():
+    return render_template('draw_mnist.html')
+
+
+@app.route('/quickdraw')
+def quickdraw():
+    return render_template('draw_quickdraw.html')
+
+
+@app.route('/landmark/upload')
+def landmark():
+    return render_template('upload_landmark.html')
+
+
+@app.route('/objdect/yolov3')
+def yolov3():
+    return render_template('upload_yolo_img.html')
+
+
+
 
 @app.route('/mnist/draw_prediction', methods=['POST'])
 def mnist_predict():
@@ -98,11 +110,6 @@ def mnist_predict():
         mnist_draw = mnist_draw[init_Base64:]
         mnist_draw_decoded = base64.b64decode(mnist_draw)
 
-        # Fix later(to PIL version)
-        # Conver bytes array to PIL Image  
-        # imageStream = io.BytesIO(draw_decoded)
-        # img = Image.open(imageStream)
-
         mnist_img = np.asarray(bytearray(mnist_draw_decoded), dtype="uint8")
         mnist_img = cv2.imdecode(mnist_img, cv2.IMREAD_GRAYSCALE)
         mnist_img = cv2.resize(mnist_img, (28,28), interpolation = cv2.INTER_AREA)
@@ -111,9 +118,9 @@ def mnist_predict():
         weight_path = './weight/mnist.pth'
         mnist_model = LeNet().to(device)
         mnist_img, mnist_pred = mnist_evaluation(mnist_img, weight_path, mnist_model)
-
         mnist_pred = int(mnist_pred)
     return render_template('draw_mnist.html', prediction=mnist_pred)
+
 
 
 @app.route('/quickdraw/prediction', methods=['POST'])
@@ -178,6 +185,7 @@ def landmark_upload_image():
 
     return render_template('upload_landmark.html', pred=landmark_preds, filename=landmark_fname)
 
+
 @app.route('/yolov3/prediction', methods=['POST'])
 def yolov3_upload_image():
     with open('./dataset/coco.names', 'r') as coco_name:
@@ -195,7 +203,6 @@ def yolov3_upload_image():
 
         weight_path = './weight/yolov3_chris.pt'
         yolov3_img = yolov3_evaluation(yolov3_img, weight_path, coco_classmap, yolov3_fname)
-        print(yolov3_fname)
         
     return render_template('upload_yolo_img.html', img_filename = yolov3_fname)
 

@@ -7,16 +7,17 @@ model : vairous-->
 <head>
 	<meta charset = "UTF-8">
 	<title> Computer Vision World </title>
+	<link rel="stylesheet" href="main.css" />
 	<style>
 		#container {
-        		width:960px;
-        		margin-left: auto;
+			width:960px;
+			margin-left: auto;
 			margin-right:auto;
-        		text-align:center;
+			text-align:center;
 		}
 		.tab {
-        		list-style: none;
-        		margin: 0;
+			list-style: none;
+			margin: 0;
 			padding: 0;
 			overflow: hidden;
 			text-align:center;
@@ -42,77 +43,77 @@ model : vairous-->
 		}       
 
 		ul.tab li.project {
-        		background-color:rgb(153,232,247);
-        		color: #222
+			background-color:rgb(153,232,247);
+			color: #222
 		}
 		.tabcontent.project{
-        		display:block;
+			display:block;
 		}
 		.subtab {
-                        list-style: none;
-                        margin: 0;
-                        padding: 0;
-                        overflow: hidden;
-                        text-align:center;
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+			text-align:center;
                 }
                 .subtab li{
                         display: inline-block;
                 }
                 .subtab li a {
                         display: inline-block;
-                        color: #000;
-                        text-align: center;
-                        text-decoration: none;
-                        padding: 14px 16px;
-                        front-size: 17px;
-                        transition: 0.3s;
+					color: #000;
+					text-align: center;
+					text-decoration: none;
+					padding: 14px 16px;
+					front-size: 17px;
+					transition: 0.3s;
                 }
                 .subtabcontent{
-                        display: none;
-                        backgroud-color:rgb(150,200, 200);
-                        padding: 6px 12px;
-                        color: #fff;
-                        text-align:center;
+					display: none;
+					backgroud-color:rgb(150,200, 200);
+					padding: 6px 12px;
+					color: #fff;
+					text-align:center;
                 }
                 ul.subtab li.subproject {
-                        background-color:rgb(150,200,200);
-                        color: #222
+					background-color:rgb(150,200,200);
+					color: #222
                 }
                 .subtabcontent.subproject{
-                        display:block;
+					display:block;
 		}
 		.liltab {
-                        list-style: none;
-                        margin: 0;
-                        padding: 0;
-                        overflow: hidden;
-                        text-align:center;
+					list-style: none;
+					margin: 0;
+					padding: 0;
+					overflow: hidden;
+					text-align:center;
                 }
                 .liltab li{
-                        float: left;
+					float: left;
                 }
                 .liltab li a {
-                        display: inline-block;
-                        color: #000;
-                        text-align: center;
-                        text-decoration: none;
-                        padding: 14px 16px;
-                        front-size: 17px;
-                        transition: 0.3s;
+					display: inline-block;
+					color: #000;
+					text-align: center;
+					text-decoration: none;
+					padding: 14px 16px;
+					front-size: 17px;
+					transition: 0.3s;
                 }
                 .liltabcontent{
-                        display: none;
-                        backgroud-color:rgb(100,240, 240);
-                        padding: 6px 12px;
-                        color: #fff;
-                        text-align:center;
+					display: none;
+					backgroud-color:rgb(100,240, 240);
+					padding: 6px 12px;
+					color: #fff;
+					text-align:center;
                 }
                 ul.liltab li.subsubproject {
-                        background-color:rgb(100,240,240);
-                        color: #222
+					background-color:rgb(100,240,240);
+					color: #222
                 }
                 .liltabcontent.subsubproject{
-                        display:block;
+					display:block;
 		}
 	div {
 		height: 100%;
@@ -129,96 +130,103 @@ model : vairous-->
 	</style>
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
+
+	<h2> Computer Vision World </h2>
 </head>
-<body>
-	<div id  ="container">
-		<h2> Computer Vision World </h2>
-		<ul class ="tab">
-			<li class = "project" data-tab = "tab1"><a href ="#"> Image-Classification </a></li>
-			<li data-tab = "tab2"><a href = "#"> Object-Detection </a></li>
-			<li data-tab = "tab3"><a href = "#"> Instance-Segmentation </a></li>
-		</ul>
-		
-		<div id ="tab1", class = "tabcontent project">
-			<ul class = "subtab">
-			<li class = "subproject"  data-tab = "tab4"><a href ="#"> MNIST⌄ </a></li>
-			<li data-tab = "tab5"><a href ="./quickdraw"> Quick Draw </a><li>
-			<li data-tab = "tab8"><a href ="./landmark/upload"> LandMark </a></li>
-			<!-- add more tab as we have more data structures -->
-			</ul>
-			<div id = "tab4", class="subtabcontent project">
-				<ul class = "liltab">
-				<div class = "bot">
-					<li class = "subsubproject"  data-tab = "tab6"><a href = "./mnist/upload"> Upload Mnist Pic </a></li>
-                                <li data-tab = "tab7"><a href ="./mnist/pad"> Pad Drawing </a></li>
-				</div>
-				</ul>
-			</div>
-		</div>
+
+<body>	
+	<ul class ="tab">
+		<li data-tab = "img_classification_tab"><a href ="#"> Image Classification </a></li>
+		<li data-tab = "obj_detection_tab"><a href = "#"> Object Detection </a></li>
+		<li data-tab = "instance_seg_tab"><a href = "#"> Instance Segmentation </a></li>
+	</ul>
 	
+	<div id ="img_classification_tab", class = "tabcontent project">
+		<ul class = "subtab">
+			<li class = "subproject"  data-tab = "MNIST_tab"><a href ="#"> MNIST⌄ </a></li>
+			<li data-tab = "quickdraw_tab"><a href ="./quickdraw"> Quick Draw </a><li>
+			<li data-tab = "landmark_tab"><a href ="./landmark/upload"> LandMark </a></li>
+		</ul>
 
-		<div id="tab2", class = "tabcontent">
-			<ul class = "subtab">
-				<li class = "subproject" data-tab = "tab9"><a href="#"> One Stage </a></li>
-				<li data-tab = "tab10"><a href="#"> Two Stage </a></li>
-			</ul>
-			<div id = "tab9", class="subtabcontent project">
-				<ul class = "liltab">
-					<div class = "bot">
-						<li class = "subsubproject" data-tab = "tab11"><a href ="#"> YOLO </a></li>
-						<li data-tab = "tab12" ><a href = "#"> ssd </a><li>
-                                                <li data-tab = "tab13" ><a href = "#"> YOLO v2 </a><li>
-                                                <li data-tab = "tab14" ><a href = "./objdect/yolov3"> YOLO v3 </a><li>
-					</div></ul>
+		<div id = "MNIST_tab", class="subtabcontent project">
+			<ul class = "liltab">
+			<div class = "bot">
+				<li class = "subsubproject"  data-tab = "MNIST_upload_tab"><a href = "./mnist/upload"> Upload Mnist Image </a></li>
+				<li data-tab = "MNIST_pad_tab"><a href ="./mnist/pad"> Drawing Pad </a></li>
+				<li data-tab = "test_tab"><a href ="./"> TEST </a></li>
 			</div>
-			<div id = "tab10", class="subtabcontent project">
-                                <ul class = "liltab">
-                                        <div class = "bot">
-                                                <li class = "subsubproject" data-tab = "tab15"><a href ="#"> rcnn </a></li>
-                                                <li data-tab = "tab16" ><a href = "#"> fast-rcnn </a><li>
-                                                <li data-tab = "tab17" ><a href = "#"> faster-rcnn </a><li>
-                                        </div></ul>
-                        </div>
-		</div>
-
-		<div id="tab3", class ="tabcontent">
-			<h3> Instance-segmentation</h3>
-			<p> example </p>
+			</ul>
 		</div>
 	</div>
+
+
+	<div id="obj_detection_tab", class = "tabcontent">
+		<ul class = "subtab">
+			<li class = "subproject" data-tab = "one_stage_tab"><a href="#"> One Stage </a></li>
+			<li data-tab = "two_stage_tab"><a href="#"> Two Stage </a></li>
+		</ul>
+		<div id = "one_stage_tab", class="subtabcontent project">
+			<ul class = "liltab">
+				<div class = "bot">
+					<li class = "subsubproject" data-tab = "tab11"><a href ="#"> YOLO </a></li>
+					<li data-tab = "tab12" ><a href = "#"> ssd </a><li>
+					<li data-tab = "tab13" ><a href = "#"> YOLO v2 </a><li>
+					<li data-tab = "tab14" ><a href = "./objdect/yolov3"> YOLO v3 </a><li>
+				</div></ul>
+		</div>
+		<div id = "two_stage_tab", class="subtabcontent project">
+			<ul class = "liltab">
+				<div class = "bot">
+					<li class = "subsubproject" data-tab = "tab15"><a href ="#"> rcnn </a></li>
+					<li data-tab = "tab16" ><a href = "#"> fast-rcnn </a><li>
+					<li data-tab = "tab17" ><a href = "#"> faster-rcnn </a><li>
+				</div></ul>
+					</div>
+	</div>
+
+	<div id="instance_seg_tab", class ="tabcontent">
+		<h3> Instance-segmentation</h3>
+		<p> example </p>
+	</div>
+</div>
+<script>
+	$(function(){
+		$('ul.tab li').click(function() {
+			var activeTab = $(this).attr('data-tab');
+			$('ul.tab li').removeClass('project');
+			$('.tabcontent').removeClass('project');
+			$(this).addClass('project');
+			$('#' + activeTab).addClass('project');
+		})
+	});
+</script>
 	<script>
-		$(function(){
-			$('ul.tab li').click(function() {
-				var activeTab = $(this).attr('data-tab');
-				$('ul.tab li').removeClass('project');
-				$('.tabcontent').removeClass('project');
-				$(this).addClass('project');
-				$('#' + activeTab).addClass('project');
-			})
-		});
+			$(function(){
+					$('ul.subtab li').click(function() {
+							var activeTab = $(this).attr('data-tab');
+							$('ul.subtab li').removeClass('subproject');
+							$('.subtabcontent').removeClass('subproject');
+							$(this).addClass('subproject');
+							$('#' + activeTab).addClass('subproject');
+					})
+			});
 	</script>
-        <script>
-                $(function(){
-                        $('ul.subtab li').click(function() {
-                                var activeTab = $(this).attr('data-tab');
-                                $('ul.subtab li').removeClass('subproject');
-                                $('.subtabcontent').removeClass('subproject');
-                                $(this).addClass('subproject');
-                                $('#' + activeTab).addClass('subproject');
-                        })
-                });
-        </script>
-        <script>
-                $(function(){
-                        $('ul.liltab li').click(function() {
-                                var activeTab = $(this).attr('data-tab');
-                                $('ul.liltab li').removeClass('subsubproject');
-                                $('.liltabcontent').removeClass('subsubproject');
-                                $(this).addClass('subsubproject');
-                                $('#' + activeTab).addClass('subsubproject');
-                        })
-                });
-        </script>
+	<script>
+			$(function(){
+					$('ul.liltab li').click(function() {
+							var activeTab = $(this).attr('data-tab');
+							$('ul.liltab li').removeClass('subsubproject');
+							$('.liltabcontent').removeClass('subsubproject');
+							$(this).addClass('subsubproject');
+							$('#' + activeTab).addClass('subsubproject');
+					})
+			});
+	</script>
 
 </body>
+
+<!-- <body>
+	<upload_mnist include-html="/upload_mnist.html">
+</body> -->
+
 </html>
